@@ -8,5 +8,9 @@ type Printer struct {
 	Description string `json:"description"`
 }
 
-//AKIAWDUKBNEY6FSWBD6B
-//zjKReHQF3X2DSpdcS2oQXWa1WX6ZpRms0yfRI/LT
+// AKIAWDUKBNEY6FSWBD6B
+// zjKReHQF3X2DSpdcS2oQXWa1WX6ZpRms0yfRI/LT
+// Database login
+// username: root
+// Master Password: moHoAwOyqbdN11ha46fe
+// postgresql://pos-api-service.ci5bs4qfk9kq.ap-southeast-1.rds.amazonaws.com/outlet_0001
