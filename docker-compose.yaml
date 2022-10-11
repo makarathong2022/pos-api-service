@@ -15,7 +15,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_SOURCE=postgresql://root:Thong@123@postgres:5432/BankSystem?sslmode=disable
+      - DB_SOURCE=postgresql://root:Thong@123@postgres:5432/outlet_0001?sslmode=disable
     depends_on:
       - postgres
     entrypoint:
