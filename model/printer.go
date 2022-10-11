@@ -7,3 +7,6 @@ type Printer struct {
 	IpAddress   string `json:"ip_address" binding:"required"`
 	Description string `json:"description"`
 }
+
+//AKIAWDUKBNEY6FSWBD6B
+//zjKReHQF3X2DSpdcS2oQXWa1WX6ZpRms0yfRI/LT
