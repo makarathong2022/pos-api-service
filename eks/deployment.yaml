@@ -1,7 +1,8 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: pos-api-service-deployment
+  name: pos-api-deployment
   labels:
     app: pos-api
 spec:
@@ -16,7 +17,7 @@ spec:
     spec:
       containers:
       - name: pos-api
-        image: 420122552625.dkr.ecr.ap-southeast-1.amazonaws.com/pos-api-service:93f4931ba39488ed3cc2c4f75651c6a967ca9b5b
+        image: 420122552625.dkr.ecr.ap-southeast-1.amazonaws.com/pos-api-service:bd9f43a7a9a6b92de4c946c091da23f92c288153
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
