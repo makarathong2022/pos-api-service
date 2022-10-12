@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: pos-api
-        image: 420122552625.dkr.ecr.ap-southeast-1.amazonaws.com/pos-api-service:bd9f43a7a9a6b92de4c946c091da23f92c288153
+        image: 420122552625.dkr.ecr.ap-southeast-1.amazonaws.com/simplebank:16fd02ef2a4d0592743f747403d6c284242935f0
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

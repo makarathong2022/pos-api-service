@@ -6,3 +6,4 @@ type MenuSize struct {
 	Sort        int64  `json:"sort" binding:"required"`
 	Description string `json:"description"`
 }
+
