@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	"time"
+
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 func (server *Server) getMenuCategories(ctx *gin.Context) {
 	var req model.Body
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}

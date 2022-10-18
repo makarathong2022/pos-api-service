@@ -90,15 +90,21 @@ func (server *Server) getMenuItem(ctx *gin.Context) {
 }
 
 func (server *Server) updateMenuItem(ctx *gin.Context) {
-	var req model.MenuItem
 
+	var params model.Params
+	if err := ctx.ShouldBindUri(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	var req model.MenuItem
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	arg := db.UpdateMenuItemParams{
-		ID:          int64(req.ID),
+		ID:          int64(params.ID),
 		ItemCd:      req.ItemCd,
 		ItemName:    req.ItemName,
 		Abv:         req.Abv,

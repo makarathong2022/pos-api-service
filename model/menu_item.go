@@ -3,7 +3,6 @@ package model
 import "time"
 
 type MenuItem struct {
-	ID          int64     `uri:"id" binding:"required,min=1"`
 	ItemCd      int32     `json:"item_cd" binding:"required"`
 	ItemName    string    `json:"item_name" binding:"required"`
 	Abv         string    `json:"abv" binding:"required"`
