@@ -2,13 +2,15 @@
     "sqltools.connections": [
         {
             "previewLimit": 50,
-            "server": "pos-service-api.ci5bs4qfk9kq.ap-southeast-1.rds.amazonaws.com",
+            "server": "pos-api-service.ci5bs4qfk9kq.ap-southeast-1.rds.amazonaws.com",
             "port": 5432,
             "driver": "PostgreSQL",
             "name": "POS",
             "database": "outlet_0001",
             "username": "root",
-            "password": "XxfO5SNLGgzVredYzmxr"
+            "password": "Cp6L7XXTPkXJpsVXcCm6"
         }
-    ]
+    ],
+    "commentTranslate.hover.enabled": true,
+    "commentTranslate.targetLanguage": "en"
 }

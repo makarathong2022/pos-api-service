@@ -8,6 +8,7 @@ import (
 	"github.com/boincompany/pos_api_service/model"
 	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 func (server *Server) getTerminals(ctx *gin.Context) {
@@ -93,7 +94,7 @@ func (server *Server) updateTerminal(ctx *gin.Context) {
 
 	var req model.Terminal
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
