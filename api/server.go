@@ -43,7 +43,7 @@ func NewServer(config utils.Config, store db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 	router.POST("/items", server.createMenuItem)
-	router.GET("/items/", server.getMenuItems)
+	router.GET("/items", server.getMenuItems)
 	router.GET("/items/:id", server.getMenuItem)
 	router.PUT("/items/", server.updateMenuItem)
 	router.DELETE("/items/", server.deleteMenuItem)
@@ -59,6 +59,12 @@ func (server *Server) setupRouter() {
 	router.POST("/groups", server.createMenuGroup)
 	router.PUT("/groups/:id", server.updateMenuGroup)
 	router.DELETE("/groups/:id", server.deleteMenuGroup)
+
+	router.GET("/modifies", server.getMenuModifies)
+	router.GET("/modifies/:id", server.getMenuModify)
+	router.POST("/modifies", server.createMenuModify)
+	router.PUT("/modifies", server.updateMenuModify)
+	router.DELETE("/modifies", server.deleteMenuModify)
 
 	router.GET("/sizes", server.getMenuSizes)
 	router.GET("/sizes/:id", server.getMenuSize)

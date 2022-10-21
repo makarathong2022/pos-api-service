@@ -1,9 +1,9 @@
 package response
 
 type PageResult struct {
-	List     interface{} `json:"list"`
+	Result   interface{} `json:"result"`
 	HasNext  bool        `json:"has_next"`
-	Total    int64       `json:"total"`
-	Page     int         `json:"page"`
-	PageSize int         `json:"pageSize"`
+	Total    int         `json:"total"`
+	Page     int32       `json:"page"`
+	PageSize int32       `json:"pageSize"`
 }

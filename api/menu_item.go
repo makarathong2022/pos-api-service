@@ -1,13 +1,15 @@
 package api
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
+	"github.com/boincompany/pos_api_service/model/request"
+	"github.com/boincompany/pos_api_service/model/response"
+	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
@@ -16,7 +18,7 @@ func (server *Server) createMenuItem(ctx *gin.Context) {
 	var req model.MenuItem
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -28,7 +30,9 @@ func (server *Server) createMenuItem(ctx *gin.Context) {
 		Description: req.Description,
 		OutletID:    req.OutletID,
 	}
+
 	menuItem, err := server.store.CreateMenuItem(ctx, arg)
+
 	if err != nil {
 		if pqErr, ok := err.(*pq.Error); ok {
 			log.Println(pqErr.Code.Name())
@@ -38,17 +42,18 @@ func (server *Server) createMenuItem(ctx *gin.Context) {
 				return
 			}
 		}
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
-
 	}
-	ctx.JSON(http.StatusOK, menuItem)
+
+	response.OkWithDetailed(menuItem, utils.CREATE_SUCCESS, ctx)
 }
 
 func (server *Server) getMenuItems(ctx *gin.Context) {
-	var req model.Body
+	var req request.PageInfo
+
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -56,87 +61,91 @@ func (server *Server) getMenuItems(ctx *gin.Context) {
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
-	fmt.Println(arg)
 
 	menuItems, err := server.store.GetMenuItems(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	req.HasNext = len(menuItems) == int(req.PageSize)
-	req.Total = len(menuItems)
-	req.Result = menuItems
-	ctx.JSON(http.StatusOK, req)
+	total := len(menuItems)
+
+	response.OkWithDetailed(response.PageResult{
+		Total:    total,
+		HasNext:  total == int(req.PageSize),
+		Result:   menuItems,
+		Page:     req.PageID,
+		PageSize: req.PageSize,
+	}, utils.GET_SUCCESS, ctx)
+
 }
 
 func (server *Server) getMenuItem(ctx *gin.Context) {
-	var res model.MenuItemResponse
+	var res request.GetById
 	if err := ctx.ShouldBindUri(&res); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	menuItem, err := server.store.GetMenuItem(ctx, int64(res.ID))
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, menuItem)
+	response.OkWithDetailed(menuItem, utils.GET_SUCCESS, ctx)
 
 }
 
 func (server *Server) updateMenuItem(ctx *gin.Context) {
 
-	var params model.Params
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	var req request.GetById
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	var req model.MenuItem
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	var body model.MenuItem
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.UpdateMenuItemParams{
-		ID:          int64(params.ID),
-		ItemCd:      req.ItemCd,
-		ItemName:    req.ItemName,
-		Abv:         req.Abv,
-		Description: req.Description,
-		OutletID:    req.OutletID,
+		ID:          req.ID,
+		ItemCd:      body.ItemCd,
+		ItemName:    body.ItemName,
+		Abv:         body.Abv,
+		Description: body.Description,
+		OutletID:    body.OutletID,
 		UpdatedAt:   time.Now(),
 	}
 
 	err := server.store.UpdateMenuItem(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, err)
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-	ctx.JSON(http.StatusOK, "One Record has been updated")
+
+	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-// Delete Menu Item
 func (server *Server) deleteMenuItem(ctx *gin.Context) {
-	var req model.MenuItemResponse
+	var req request.GetById
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-	fmt.Println(req.ID)
 
-	err := server.store.DeleteMenuItem(ctx, int64(req.ID))
+	err := server.store.DeleteMenuItem(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "One Record has been deleted")
+	response.OkWithMessage(utils.DELETE_SUCCESS, ctx)
 }

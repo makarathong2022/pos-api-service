@@ -1,19 +1,21 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
+	"github.com/boincompany/pos_api_service/model/request"
+	"github.com/boincompany/pos_api_service/model/response"
+	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func (server *Server) getMenuCategories(ctx *gin.Context) {
-	var req model.Body
+	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -25,40 +27,45 @@ func (server *Server) getMenuCategories(ctx *gin.Context) {
 	categories, err := server.store.GetMenuCategories(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-	req.Result = categories
-	req.HasNext = len(categories) == int(req.PageSize)
-	req.Total = len(categories)
-	ctx.JSON(http.StatusOK, req)
+
+	total := len(categories)
+
+	response.OkWithDetailed(response.PageResult{
+		PageSize: req.PageSize,
+		Page:     req.PageID,
+		Result:   categories,
+		Total:    total,
+		HasNext:  total == int(req.PageSize),
+	}, utils.GET_SUCCESS, ctx)
 
 }
 
 func (server *Server) getMenuCategory(ctx *gin.Context) {
-	var req model.Params
+	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	category, err := server.store.GetMenuCategory(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, category)
-
+	response.OkWithData(category, ctx)
 }
 
 func (server *Server) createMenuCategory(ctx *gin.Context) {
 	var req model.Category
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -72,60 +79,60 @@ func (server *Server) createMenuCategory(ctx *gin.Context) {
 	category, err := server.store.CreateMenuCategory(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, category)
+	response.OkWithData(category, ctx)
 }
 
 func (server *Server) updateMenuCategory(ctx *gin.Context) {
-	var req model.Category
-	var param model.Params
+	var body model.Category
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&param); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.UpdateMenuCategoryParams{
-		ID:           param.ID,
-		CategoryCd:   req.CategoryCd,
-		CategoryName: req.CategoryName,
-		Sort:         req.Sort,
-		Description:  req.Description,
+		ID:           req.ID,
+		CategoryCd:   body.CategoryCd,
+		CategoryName: body.CategoryName,
+		Sort:         body.Sort,
+		Description:  body.Description,
 		UpdatedAt:    time.Now(),
 	}
 
 	err := server.store.UpdateMenuCategory(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusBadRequest, "One record update successfully")
+	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
 func (server *Server) deleteMenuCategory(ctx *gin.Context) {
-	var req model.Params
+	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	err := server.store.DeleteMenuCategory(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, "One record has been deleted")
+	response.OkWithMessage(utils.DELETE_SUCCESS, ctx)
 }

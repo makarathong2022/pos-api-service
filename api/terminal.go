@@ -1,21 +1,22 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
+	"github.com/boincompany/pos_api_service/model/request"
+	"github.com/boincompany/pos_api_service/model/response"
 	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
 
 func (server *Server) getTerminals(ctx *gin.Context) {
-	var req model.Body
+	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -27,118 +28,121 @@ func (server *Server) getTerminals(ctx *gin.Context) {
 	terminals, err := server.store.GetTerminals(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	countTerminal := len(terminals)
-	req.Result = terminals
-	req.Total = countTerminal
-	req.HasNext = countTerminal == int(req.PageSize)
+	total := len(terminals)
 
-	ctx.JSON(http.StatusOK, req)
+	response.OkWithDetailed(response.PageResult{
+		Total:    total,
+		HasNext:  total == int(req.PageSize),
+		Result:   terminals,
+		Page:     req.PageID,
+		PageSize: req.PageSize,
+	}, utils.GET_SUCCESS, ctx)
 
 }
 
 func (server *Server) getTerminal(ctx *gin.Context) {
-	var params model.Params
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	var req request.GetById
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	terminal, err := server.store.GetTerminal(ctx, params.ID)
+	terminal, err := server.store.GetTerminal(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, terminal)
+	response.OkWithDetailed(terminal, utils.GET_SUCCESS, ctx)
 }
 
 func (server *Server) createNewTerminal(ctx *gin.Context) {
-	var req model.Terminal
+	var body model.Terminal
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.CreateTerminalParams{
-		TerminalCd:   req.TerminalCd,
-		TerminalName: req.TerminalName,
-		Sort:         req.Sort,
-		IpAddress:    req.IpAddress,
-		Description:  req.Description,
+		TerminalCd:   body.TerminalCd,
+		TerminalName: body.TerminalName,
+		Sort:         body.Sort,
+		IpAddress:    body.IpAddress,
+		Description:  body.Description,
 	}
 
 	terminal, err := server.store.CreateTerminal(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, terminal)
+	response.OkWithDetailed(terminal, utils.CREATE_SUCCESS, ctx)
 
 }
 
 func (server *Server) updateTerminal(ctx *gin.Context) {
-	var params model.Params
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	var req model.Terminal
+	var body model.Terminal
 
-	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindWith(&body, binding.JSON); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.UpdateTerminalParams{
-		ID:           params.ID,
-		TerminalCd:   req.TerminalCd,
-		TerminalName: req.TerminalName,
-		Sort:         req.Sort,
-		IpAddress:    req.IpAddress,
+		ID:           req.ID,
+		TerminalCd:   body.TerminalCd,
+		TerminalName: body.TerminalName,
+		Sort:         body.Sort,
+		IpAddress:    body.IpAddress,
 		UpdatedAt:    time.Now(),
-		Description:  req.Description,
+		Description:  body.Description,
 	}
 
 	err := server.store.UpdateTerminal(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.UPDATE_SUCCESS)
+	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 
 }
 
 func (server *Server) deleteTerminal(ctx *gin.Context) {
-	var params model.Params
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.DeleteTerminalParams{
-		ID:        params.ID,
+		ID:        req.ID,
 		DeletedAt: time.Now(),
 	}
 
 	err := server.store.DeleteTerminal(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.DELETE_SUCCESS)
+	response.OkWithMessage(utils.DELETE_SUCCESS, ctx)
 }

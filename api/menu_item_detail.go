@@ -9,26 +9,26 @@ import (
 )
 
 func (server *Server) createMenuItemDetail(ctx *gin.Context) {
-	var req model.MenuItemDetail
+	var body model.MenuItemDetail
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
 	arg := db.CreateMenuItemDetailParams{
-		ItemCdDetail: req.ItemCdDetail,
-		ItemID:       req.ItemID,
-		GroupID:      req.GroupID,
-		CategoryID:   req.CategoryID,
-		SizeID:       req.SizeID,
-		Cost:         req.Cost,
-		Price:        req.Price,
-		OutletID:     req.OutletID,
-		PrinterID:    req.PrinterID,
-		VatID:        req.VatID,
-		Vat:          req.Vat,
-		TerminalID:   req.TerminalID,
+		ItemCdDetail: body.ItemCdDetail,
+		ItemID:       body.ItemID,
+		GroupID:      body.GroupID,
+		CategoryID:   body.CategoryID,
+		SizeID:       body.SizeID,
+		Cost:         body.Cost,
+		Price:        body.Price,
+		OutletID:     body.OutletID,
+		PrinterID:    body.PrinterID,
+		VatID:        body.VatID,
+		Vat:          body.Vat,
+		TerminalID:   body.TerminalID,
 	}
 
 	menuItemDetail, err := server.store.CreateMenuItemDetail(ctx, arg)

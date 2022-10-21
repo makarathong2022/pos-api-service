@@ -1,20 +1,21 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
+	"github.com/boincompany/pos_api_service/model/request"
+	"github.com/boincompany/pos_api_service/model/response"
 	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func (server *Server) getPrinters(ctx *gin.Context) {
-	var req model.Body
+	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -26,116 +27,120 @@ func (server *Server) getPrinters(ctx *gin.Context) {
 	printers, err := server.store.GetPrinters(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	req.Result = printers
-	req.HasNext = len(printers) == int(req.PageSize)
-	req.Total = len(printers)
-	ctx.JSON(http.StatusOK, req)
+	total := len(printers)
 
+	response.OkWithDetailed(response.PageResult{
+		Total:    total,
+		HasNext:  total == int(req.PageSize),
+		Result:   printers,
+		Page:     req.PageID,
+		PageSize: req.PageSize,
+	}, utils.GET_SUCCESS, ctx)
 }
 
 func (server *Server) getPrinter(ctx *gin.Context) {
-	var params model.Params
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	printer, err := server.store.GetPrinter(ctx, params.ID)
+	printer, err := server.store.GetPrinter(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, printer)
+	response.OkWithDetailed(printer, utils.GET_SUCCESS, ctx)
 }
 
 func (server *Server) createNewPrinter(ctx *gin.Context) {
-	var req model.Printer
+	var body model.Printer
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.CreatePrinterParams{
-		PrintCd:     req.PrinterCd,
-		PrintName:   req.PrinterName,
-		Sort:        req.Sort,
-		Description: req.Description,
-		IpAddress:   req.IpAddress,
+		PrintCd:     body.PrinterCd,
+		PrintName:   body.PrinterName,
+		Sort:        body.Sort,
+		Description: body.Description,
+		IpAddress:   body.IpAddress,
 	}
 
 	printer, err := server.store.CreatePrinter(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, printer)
+	response.OkWithDetailed(printer, utils.CREATE_SUCCESS, ctx)
 
 }
 
 func (server *Server) updatePrinter(ctx *gin.Context) {
-	var param model.Params
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&param); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	var req model.Printer
+	var body model.Printer
 
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.UpdatePrinterParams{
-		ID:          param.ID,
-		PrintCd:     req.PrinterCd,
-		PrintName:   req.PrinterName,
-		IpAddress:   req.IpAddress,
-		Sort:        req.Sort,
-		Description: req.Description,
+		ID:          req.ID,
+		PrintCd:     body.PrinterCd,
+		PrintName:   body.PrinterName,
+		IpAddress:   body.IpAddress,
+		Sort:        body.Sort,
+		Description: body.Description,
 	}
 
 	err := server.store.UpdatePrinter(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.UPDATE_SUCCESS)
+	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 
 }
 
 func (server *Server) deletePrinter(ctx *gin.Context) {
-	var params model.Params
+	var req request.GetById
 
-	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
 	arg := db.DeletePrinterParams{
-		ID:        params.ID,
+		ID:        req.ID,
 		DeletedAt: time.Now(),
 	}
 	err := server.store.DeletePrinter(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, utils.DELETE_SUCCESS)
+	response.OkWithMessage(utils.DELETE_SUCCESS, ctx)
 
 }

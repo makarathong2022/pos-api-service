@@ -12,7 +12,3 @@ type MenuItem struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	DeletedAt   time.Time `json:"deleted_at"`
 }
-
-type MenuItemResponse struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
