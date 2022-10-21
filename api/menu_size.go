@@ -6,14 +6,25 @@ import (
 
 	db "github.com/boincompany/pos_api_service/db/sqlc"
 	"github.com/boincompany/pos_api_service/model"
+	"github.com/boincompany/pos_api_service/model/response"
+	"github.com/boincompany/pos_api_service/utils"
 	"github.com/gin-gonic/gin"
 )
 
+// GetExaMenuSizes
+// @Tags      ExaMenuSizes
+// @Summary   分页获取权限客户列表
+// @Security  ApiKeyAuth
+// @accept    application/json
+// @Produce   application/json
+// @Param     data  query     request.PageInfo
+// @Success   200   {object}  response.Response{data=response.PageResult,msg=string}
+// @Router    /sizes [get]
 func (server *Server) getMenuSizes(ctx *gin.Context) {
 	var req model.Body
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -25,14 +36,19 @@ func (server *Server) getMenuSizes(ctx *gin.Context) {
 	sizes, err := server.store.GetMenuSizes(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-	countSize := len(sizes)
-	req.HasNext = countSize == int(req.PageSize)
-	req.Total = countSize
-	req.Result = sizes
-	ctx.JSON(http.StatusOK, req)
+
+	total := len(sizes)
+
+	response.OkWithDetailed(response.PageResult{
+		List:     sizes,
+		Total:    int64(total),
+		Page:     int(req.PageID),
+		PageSize: int(req.PageSize),
+		HasNext:  total == int(req.PageSize),
+	}, utils.GET_SUCCESS, ctx)
 
 }
 
@@ -40,24 +56,24 @@ func (server *Server) getMenuSize(ctx *gin.Context) {
 	var req model.Params
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 	}
 
 	size, err := server.store.GetMenuSize(ctx, req.ID)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, size)
+	response.OkWithData(size, ctx)
 }
 
 func (server *Server) createMenuSize(ctx *gin.Context) {
 	var req model.MenuSize
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(err.Error(), ctx)
 		return
 	}
 
@@ -71,18 +87,18 @@ func (server *Server) createMenuSize(ctx *gin.Context) {
 	size, err := server.store.CreateMenuSize(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(err.Error(), ctx)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, size)
+	response.OkWithData(size, ctx)
 }
 
 func (server *Server) updateMenuSize(ctx *gin.Context) {
 	var params model.Params
 
 	if err := ctx.ShouldBindUri(&params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -104,18 +120,17 @@ func (server *Server) updateMenuSize(ctx *gin.Context) {
 	err := server.store.UpdateMenuSize(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, "Update successfully")
+	response.OkWithMessage("One data update successfully", ctx)
 }
 
 func (server *Server) deleteMenuSize(ctx *gin.Context) {
 	var params model.Params
 
 	if err := ctx.ShouldBindUri(params); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
@@ -127,10 +142,9 @@ func (server *Server) deleteMenuSize(ctx *gin.Context) {
 	err := server.store.DeleteMenuSize(ctx, arg)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
-
-	ctx.JSON(http.StatusOK, "One record deleted successfully")
+	response.OkWithMessage("One record deleted successfully", ctx)
 
 }

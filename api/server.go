@@ -108,3 +108,7 @@ func errorResponse(err error) gin.H {
 		"error": err.Error(),
 	}
 }
+
+func errRes(err error) string {
+	return err.Error()
+}
