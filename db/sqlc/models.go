@@ -3,6 +3,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -60,6 +61,23 @@ type TblMenuItemDetail struct {
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 	DeletedAt  time.Time `json:"deleted_at"`
+}
+
+type TblMenuItemModify struct {
+	ID       int64 `json:"id"`
+	ItemCd   int32 `json:"item_cd"`
+	ModifyCd int32 `json:"modify_cd"`
+}
+
+type TblMenuModify struct {
+	ID          int64        `json:"id"`
+	ModifyCd    int32        `json:"modify_cd"`
+	ModifyName  string       `json:"modify_name"`
+	Sort        int64        `json:"sort"`
+	Description string       `json:"description"`
+	CreatedAt   time.Time    `json:"created_at"`
+	UpdatedAt   sql.NullTime `json:"updated_at"`
+	DeletedAt   sql.NullTime `json:"deleted_at"`
 }
 
 type TblMenuSize struct {

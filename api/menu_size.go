@@ -51,6 +51,7 @@ func (server *Server) getMenuSize(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
+		return
 	}
 
 	size, err := server.store.GetMenuSize(ctx, req.ID)
@@ -123,7 +124,7 @@ func (server *Server) updateMenuSize(ctx *gin.Context) {
 func (server *Server) deleteMenuSize(ctx *gin.Context) {
 	var req request.GetById
 
-	if err := ctx.ShouldBindUri(req); err != nil {
+	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}

@@ -11,6 +11,8 @@ type Querier interface {
 	CreateMenuGroup(ctx context.Context, arg CreateMenuGroupParams) (TblMenuGroup, error)
 	CreateMenuItem(ctx context.Context, arg CreateMenuItemParams) (TblMenuItem, error)
 	CreateMenuItemDetail(ctx context.Context, arg CreateMenuItemDetailParams) (TblMenuItemDetail, error)
+	CreateMenuItemModify(ctx context.Context, arg CreateMenuItemModifyParams) (TblMenuItemModify, error)
+	CreateMenuModify(ctx context.Context, arg CreateMenuModifyParams) (TblMenuModify, error)
 	CreateMenuSize(ctx context.Context, arg CreateMenuSizeParams) (TblMenuSize, error)
 	CreateOutlet(ctx context.Context, arg CreateOutletParams) (TblOutlet, error)
 	CreatePrinter(ctx context.Context, arg CreatePrinterParams) (TblPrinter, error)
@@ -18,6 +20,7 @@ type Querier interface {
 	DeleteMenuCategory(ctx context.Context, id int64) error
 	DeleteMenuGroup(ctx context.Context, arg DeleteMenuGroupParams) error
 	DeleteMenuItem(ctx context.Context, id int64) error
+	DeleteMenuModify(ctx context.Context, id int64) error
 	DeleteMenuSize(ctx context.Context, arg DeleteMenuSizeParams) error
 	DeleteOutlet(ctx context.Context, arg DeleteOutletParams) error
 	DeletePrinter(ctx context.Context, arg DeletePrinterParams) error
@@ -27,7 +30,11 @@ type Querier interface {
 	GetMenuGroup(ctx context.Context, id int64) (TblMenuGroup, error)
 	GetMenuGroups(ctx context.Context, arg GetMenuGroupsParams) ([]TblMenuGroup, error)
 	GetMenuItem(ctx context.Context, id int64) (TblMenuItem, error)
+	GetMenuItemModifies(ctx context.Context, arg GetMenuItemModifiesParams) ([]GetMenuItemModifiesRow, error)
+	GetMenuItemModify(ctx context.Context, id int64) (TblMenuItemModify, error)
 	GetMenuItems(ctx context.Context, arg GetMenuItemsParams) ([]TblMenuItem, error)
+	GetMenuModifies(ctx context.Context, arg GetMenuModifiesParams) ([]TblMenuModify, error)
+	GetMenuModify(ctx context.Context, id int64) (TblMenuModify, error)
 	GetMenuSize(ctx context.Context, id int64) (TblMenuSize, error)
 	GetMenuSizes(ctx context.Context, arg GetMenuSizesParams) ([]TblMenuSize, error)
 	GetOutlet(ctx context.Context, id int64) (TblOutlet, error)
@@ -39,6 +46,8 @@ type Querier interface {
 	UpdateMenuCategory(ctx context.Context, arg UpdateMenuCategoryParams) error
 	UpdateMenuGroup(ctx context.Context, arg UpdateMenuGroupParams) error
 	UpdateMenuItem(ctx context.Context, arg UpdateMenuItemParams) error
+	UpdateMenuItemModify(ctx context.Context, arg UpdateMenuItemModifyParams) error
+	UpdateMenuModify(ctx context.Context, arg UpdateMenuModifyParams) error
 	UpdateMenuSize(ctx context.Context, arg UpdateMenuSizeParams) error
 	UpdateOutlet(ctx context.Context, arg UpdateOutletParams) error
 	UpdatePrinter(ctx context.Context, arg UpdatePrinterParams) error

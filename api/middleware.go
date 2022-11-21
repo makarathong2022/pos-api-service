@@ -40,7 +40,7 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 		fields := strings.Fields(authorizationHeader)
 		if len(fields) < 2 {
 			err := errors.New("invalid authorization header format")
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errRes(err))
 			return
 		}
 		// convert to ToLower it make it easier to compare

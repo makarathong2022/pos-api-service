@@ -91,6 +91,11 @@ func (server *Server) setupRouter() {
 	router.DELETE("/terminals/:id", server.deleteTerminal)
 
 	router.POST("/menu-item-details", server.createMenuItemDetail)
+    
+	router.GET("/item_modifies", server.getMenuItemModifies)
+	router.GET("/item_modifies/:id", server.getMenuItemModify)
+	router.POST("/item_modifies", server.createMenuItemModify)
+	router.PUT("/item_modifies/:id", server.updateMenuItemModify)
 
 	// router.POST("/users/login", server.loginUser)
 

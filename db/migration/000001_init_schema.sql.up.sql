@@ -110,6 +110,24 @@ CREATE TABLE "tbl_printers" (
     "deleted_at" TIMESTAMPTZ NOT NULL DEFAULT ('0001-01-01 00:00:00Z')
 );
 
+CREATE TABLE "tbl_menu_modifies" (
+    "id" BIGSERIAL PRIMARY KEY,
+    "modify_cd" INT NOT NULL,
+    "modify_name" VARCHAR NOT NULL,
+    "sort" BIGINT NOT NULL,
+    "description" VARCHAR NOT NULL DEFAULT (''),
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT (now()),
+    "updated_at" TIMESTAMPTZ DEFAULT NULL,
+    "deleted_at" TIMESTAMPTZ DEFAULT NULL
+);
+
+CREATE TABLE "tbl_menu_item_modifies"(
+    "id" BIGSERIAL PRIMARY KEY,
+    "item_cd" INT NOT NULL,
+    "modify_cd" INT NOT NULL
+);
+
+
 ALTER TABLE "tbl_menu_item_details" ADD FOREIGN KEY ("terminal_id") REFERENCES "tbl_terminals" ("id");
 ALTER TABLE "tbl_menu_item_details" ADD FOREIGN KEY ("printer_id") REFERENCES "tbl_printers" ("id");
 ALTER TABLE "tbl_menu_item_details" ADD FOREIGN KEY ("outlet_id") REFERENCES "tbl_outlets" ("id");
@@ -128,6 +146,8 @@ CREATE INDEX ON "tbl_menu_groups" ("group_cd");
 CREATE INDEX ON "tbl_menu_sizes" ("size_cd");
 CREATE INDEX ON "tbl_vats" ("vat_cd");
 CREATE INDEX ON "tbl_printers" ("print_cd");
+CREATE INDEX ON "tbl_menu_item_modifies" ("id");
+CREATE INDEX ON "tbl_menu_modifies" ("modify_cd");
 
 COMMENT ON COLUMN "tbl_menu_item_details"."cost" IS 'must positive';
 COMMENT ON COLUMN "tbl_menu_item_details"."price" IS 'must be positive';
