@@ -90,13 +90,16 @@ func (server *Server) setupRouter() {
 	router.PUT("/terminals/:id", server.updateTerminal)
 	router.DELETE("/terminals/:id", server.deleteTerminal)
 
-	router.POST("/menu-item-details", server.createMenuItemDetail)
-    
 	router.GET("/item_modifies", server.getMenuItemModifies)
 	router.GET("/item_modifies/:id", server.getMenuItemModify)
 	router.POST("/item_modifies", server.createMenuItemModify)
 	router.PUT("/item_modifies/:id", server.updateMenuItemModify)
 
+	router.GET("/menu-item-details", server.getMenuItemDetials)
+	router.GET("/menu-item-details/:id", server.getMenuItemDetial)
+	router.POST("/menu-item-details", server.createMenuItemDetail)
+	router.PUT("/menu-item-details/:id", server.updateMenuItemDetial)
+	router.DELETE("/menu-item-details/:id", server.deleteMenuItemDetial)
 	// router.POST("/users/login", server.loginUser)
 
 	// "/" This slash is the path prefix of all routes in this group
@@ -112,12 +115,6 @@ func (server *Server) setupRouter() {
 // Start runs the HTTP server on a specific address
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
-}
-
-func errorResponse(err error) gin.H {
-	return gin.H{
-		"error": err.Error(),
-	}
 }
 
 func errRes(err error) string {

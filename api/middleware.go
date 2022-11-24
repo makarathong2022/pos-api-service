@@ -32,7 +32,7 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 			// mean that the client does not provider this header
 			err := errors.New("authorization header is not provided")
 			// allow us to abort the request and send the json response to the client with a specific status code
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errRes(err))
 			return
 		}
 		// authorization header is provided
@@ -47,14 +47,14 @@ func authMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
 		authorizationType := strings.ToLower(fields[0])
 		if authorizationType != authorizationTypeBearer {
 			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errRes(err))
 			return
 		}
 
 		accessToken := fields[1]
 		payload, err := tokenMaker.VerifyToken(accessToken)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err))
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errRes(err))
 			return
 		}
 		// store payload to context by key-pair value

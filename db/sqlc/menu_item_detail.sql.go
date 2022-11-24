@@ -5,6 +5,7 @@ package db
 
 import (
 	"context"
+	"time"
 )
 
 const createMenuItemDetail = `-- name: CreateMenuItemDetail :one
@@ -50,6 +51,7 @@ func (q *Queries) CreateMenuItemDetail(ctx context.Context, arg CreateMenuItemDe
 		arg.Cost,
 		arg.Price,
 		arg.VatID,
+		
 		arg.Vat,
 		arg.TerminalID,
 		arg.OutletID,
@@ -75,4 +77,211 @@ func (q *Queries) CreateMenuItemDetail(ctx context.Context, arg CreateMenuItemDe
 		&i.DeletedAt,
 	)
 	return i, err
+}
+
+const deteleMenuItemDetail = `-- name: DeteleMenuItemDetail :exec
+UPDATE tbl_menu_item_details SET deleted_at = DATE.NOW() WHERE id = $1
+`
+
+func (q *Queries) DeteleMenuItemDetail(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deteleMenuItemDetail, id)
+	return err
+}
+
+const getMenuItemDetial = `-- name: GetMenuItemDetial :one
+SELECT d.item_cd_detail, d.item_id, i.item_name, gp.group_cd, gp.group_name,
+         c.category_cd, c.category_name, s.size_cd, s.size_name,
+         d.cost, d.price, p.sort, v.vat_cd, v.vat_name, p.print_cd,
+         p.print_name, p.ip_address, d.created_at, d.updated_at,
+         d.deleted_at
+         FROM tbl_menu_item_details d 
+         INNER JOIN tbl_menu_items i ON d.item_id = i.item_cd 
+         INNER JOIN tbl_menu_categories c ON c.category_cd = d.category_id
+         INNER JOIN tbl_menu_sizes s ON s.size_cd = d.size_id
+         INNER JOIN tbl_menu_groups gp ON gp.group_cd = d.group_id
+         INNER JOIN tbl_outlets o ON o.outlet_cd = d.outlet_id
+         INNER JOIN tbl_printers p ON p.print_cd = d.printer_id
+         INNER JOIN tbl_vats v ON v.vat_cd = d.vat_id
+         WHERE d.id = $1
+         LIMIT 1
+`
+
+type GetMenuItemDetialRow struct {
+	ItemCdDetail int32     `json:"item_cd_detail"`
+	ItemID       int32     `json:"item_id"`
+	ItemName     string    `json:"item_name"`
+	GroupCd      int32     `json:"group_cd"`
+	GroupName    string    `json:"group_name"`
+	CategoryCd   int32     `json:"category_cd"`
+	CategoryName string    `json:"category_name"`
+	SizeCd       int32     `json:"size_cd"`
+	SizeName     string    `json:"size_name"`
+	Cost         string    `json:"cost"`
+	Price        string    `json:"price"`
+	Sort         int64     `json:"sort"`
+	VatCd        int32     `json:"vat_cd"`
+	VatName      string    `json:"vat_name"`
+	PrintCd      int32     `json:"print_cd"`
+	PrintName    string    `json:"print_name"`
+	IpAddress    string    `json:"ip_address"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
+}
+
+func (q *Queries) GetMenuItemDetial(ctx context.Context, id int64) (GetMenuItemDetialRow, error) {
+	row := q.db.QueryRowContext(ctx, getMenuItemDetial, id)
+	var i GetMenuItemDetialRow
+	err := row.Scan(
+		&i.ItemCdDetail,
+		&i.ItemID,
+		&i.ItemName,
+		&i.GroupCd,
+		&i.GroupName,
+		&i.CategoryCd,
+		&i.CategoryName,
+		&i.SizeCd,
+		&i.SizeName,
+		&i.Cost,
+		&i.Price,
+		&i.Sort,
+		&i.VatCd,
+		&i.VatName,
+		&i.PrintCd,
+		&i.PrintName,
+		&i.IpAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const getMenuItemDetials = `-- name: GetMenuItemDetials :many
+SELECT d.item_cd_detail, d.item_id, i.item_name, gp.group_cd, gp.group_name,
+         c.category_cd, c.category_name, s.size_cd, s.size_name,
+         d.cost, d.price, p.sort, v.vat_cd, v.vat_name, p.print_cd,
+         p.print_name, p.ip_address, d.created_at, d.updated_at,
+         d.deleted_at
+         FROM tbl_menu_item_details d 
+         INNER JOIN tbl_menu_items i ON d.item_id = i.item_cd 
+         INNER JOIN tbl_menu_categories c ON c.category_cd = d.category_id
+         INNER JOIN tbl_menu_sizes s ON s.size_cd = d.size_id
+         INNER JOIN tbl_menu_groups gp ON gp.group_cd = d.group_id
+         INNER JOIN tbl_outlets o ON o.outlet_cd = d.outlet_id
+         INNER JOIN tbl_printers p ON p.print_cd = d.printer_id
+         INNER JOIN tbl_vats v ON v.vat_cd = d.vat_id
+         LIMIT $1 OFFSET $2
+`
+
+type GetMenuItemDetialsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+type GetMenuItemDetialsRow struct {
+	ItemCdDetail int32     `json:"item_cd_detail"`
+	ItemID       int32     `json:"item_id"`
+	ItemName     string    `json:"item_name"`
+	GroupCd      int32     `json:"group_cd"`
+	GroupName    string    `json:"group_name"`
+	CategoryCd   int32     `json:"category_cd"`
+	CategoryName string    `json:"category_name"`
+	SizeCd       int32     `json:"size_cd"`
+	SizeName     string    `json:"size_name"`
+	Cost         string    `json:"cost"`
+	Price        string    `json:"price"`
+	Sort         int64     `json:"sort"`
+	VatCd        int32     `json:"vat_cd"`
+	VatName      string    `json:"vat_name"`
+	PrintCd      int32     `json:"print_cd"`
+	PrintName    string    `json:"print_name"`
+	IpAddress    string    `json:"ip_address"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	DeletedAt    time.Time `json:"deleted_at"`
+}
+
+func (q *Queries) GetMenuItemDetials(ctx context.Context, arg GetMenuItemDetialsParams) ([]GetMenuItemDetialsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getMenuItemDetials, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetMenuItemDetialsRow{}
+	for rows.Next() {
+		var i GetMenuItemDetialsRow
+		if err := rows.Scan(
+			&i.ItemCdDetail,
+			&i.ItemID,
+			&i.ItemName,
+			&i.GroupCd,
+			&i.GroupName,
+			&i.CategoryCd,
+			&i.CategoryName,
+			&i.SizeCd,
+			&i.SizeName,
+			&i.Cost,
+			&i.Price,
+			&i.Sort,
+			&i.VatCd,
+			&i.VatName,
+			&i.PrintCd,
+			&i.PrintName,
+			&i.IpAddress,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateMenuItemDetail = `-- name: UpdateMenuItemDetail :exec
+UPDATE tbl_menu_item_details SET 
+       item_id = $2, group_id = $3, category_id = $4,
+       size_id = $5, vat_id = $6, cost = $7, price = $8,
+       outlet_id = $9, printer_id  = $10, terminal_id = $11,
+       updated_at = DATE.NOW()
+       WHERE id = $1
+`
+
+type UpdateMenuItemDetailParams struct {
+	ID         int64  `json:"id"`
+	ItemID     int32  `json:"item_id"`
+	GroupID    int32  `json:"group_id"`
+	CategoryID int32  `json:"category_id"`
+	SizeID     int32  `json:"size_id"`
+	VatID      int32  `json:"vat_id"`
+	Cost       string `json:"cost"`
+	Price      string `json:"price"`
+	OutletID   int32  `json:"outlet_id"`
+	PrinterID  int32  `json:"printer_id"`
+	TerminalID int32  `json:"terminal_id"`
+}
+
+func (q *Queries) UpdateMenuItemDetail(ctx context.Context, arg UpdateMenuItemDetailParams) error {
+	_, err := q.db.ExecContext(ctx, updateMenuItemDetail,
+		arg.ID,
+		arg.ItemID,
+		arg.GroupID,
+		arg.CategoryID,
+		arg.SizeID,
+		arg.VatID,
+		arg.Cost,
+		arg.Price,
+		arg.OutletID,
+		arg.PrinterID,
+		arg.TerminalID,
+	)
+	return err
 }

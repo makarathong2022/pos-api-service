@@ -38,7 +38,7 @@ func (server *Server) createMenuItem(ctx *gin.Context) {
 			log.Println(pqErr.Code.Name())
 			switch pqErr.Code.Name() {
 			case "foreign_key_violation", "unique_violoation":
-				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				ctx.JSON(http.StatusForbidden, errRes(err))
 				return
 			}
 		}

@@ -100,7 +100,7 @@ func (server *Server) updateMenuSize(ctx *gin.Context) {
 	var body model.MenuSize
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusBadRequest, errRes(err))
 		return
 	}
 
