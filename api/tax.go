@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) GetMenuModifies(ctx *gin.Context) {
+func (server *Server) GetTaxs(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -17,72 +17,74 @@ func (server *Server) GetMenuModifies(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.GetMenuModifiesParams{
-		Limit:  req.PageID,
+	arg := db.GetTaxsParams{
+		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
 
-	modifies, err := server.store.GetMenuModifies(ctx, arg)
+	taxs, err := server.store.GetTaxs(ctx, arg)
 
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	total := len(modifies)
-	response.OkWithDetailed(
-		response.PageResult{
-			Result:   modifies,
-			Total:    total,
-			Page:     req.PageID,
-			PageSize: req.PageSize,
-			HasNext:  total == int(req.PageSize),
-		}, utils.GET_SUCCESS, ctx)
+	total := len(taxs)
+
+	response.OkWithDetailed(response.PageResult{
+		Result:   taxs,
+		Total:    total,
+		HasNext:  total == int(req.PageSize),
+		Page:     req.PageID,
+		PageSize: req.PageSize,
+	}, utils.GET_SUCCESS, ctx)
 }
 
-func (server *Server) GetMenuModify(ctx *gin.Context) {
+func (server *Server) GetTax(ctx *gin.Context) {
 	var req request.GetById
+
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	modify, err := server.store.GetMenuModify(ctx, req.ID)
+	tax, err := server.store.GetTax(ctx, req.ID)
 
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	response.OkWithData(modify, ctx)
+	response.OkWithData(tax, ctx)
 }
 
-func (server *Server) CreateMenuModify(ctx *gin.Context) {
-	var body model.MenuModify
+func (server *Server) CreateTax(ctx *gin.Context) {
+	var body model.Tax
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	arg := db.CreateMenuModifyParams{
-		ModifyCd:    body.ModifyCd,
-		ModifyName:  body.ModifyName,
+	arg := db.CreateTaxParams{
+		VatCd:       body.VatCd,
+		VatKey:      body.VatKey,
+		VatName:     body.VatName,
 		Sort:        body.Sort,
 		Description: body.Description,
 	}
 
-	modify, err := server.store.CreateMenuModify(ctx, arg)
-
+	tax, err := server.store.CreateTax(ctx, arg)
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	response.OkWithData(modify, ctx)
+	response.OkWithData(tax, ctx)
+
 }
 
-func (server *Server) UpdateMenuModify(ctx *gin.Context) {
+func (server *Server) UpdateTax(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -90,22 +92,23 @@ func (server *Server) UpdateMenuModify(ctx *gin.Context) {
 		return
 	}
 
-	var body model.MenuModify
+	var body model.Tax
 
-	if err := ctx.ShouldBindJSON(&body); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	arg := db.UpdateMenuModifyParams{
+	arg := db.UpdateTaxParams{
 		ID:          req.ID,
-		ModifyCd:    body.ModifyCd,
-		ModifyName:  body.ModifyName,
-		Description: body.Description,
+		VatCd:       body.VatCd,
+		VatName:     body.VatName,
+		VatKey:      body.VatKey,
 		Sort:        body.Sort,
+		Description: body.Description,
 	}
 
-	err := server.store.UpdateMenuModify(ctx, arg)
+	err := server.store.UpdateTax(ctx, arg)
 
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -113,23 +116,24 @@ func (server *Server) UpdateMenuModify(ctx *gin.Context) {
 	}
 
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
+
 }
 
-func (server *Server) DeleteMenuModify(ctx *gin.Context) {
+
+func (server *Server) DeleteTax(ctx *gin.Context) {
 	var req request.GetById
 
-	if err := ctx.ShouldBindQuery(&req); err != nil {
+	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	err := server.store.DeleteMenuModify(ctx, req.ID)
+	err := server.store.DeleteTax(ctx, req.ID)
 
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
 		return
 	}
 
-	response.FailWithMessage(utils.DELETE_SUCCESS, ctx)
-
+	response.OkWithMessage(utils.DELETE_SUCCESS, ctx)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getMenuCategories(ctx *gin.Context) {
+func (server *Server) GetMenuCategories(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -43,7 +43,7 @@ func (server *Server) getMenuCategories(ctx *gin.Context) {
 
 }
 
-func (server *Server) getMenuCategory(ctx *gin.Context) {
+func (server *Server) GetMenuCategory(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -61,7 +61,7 @@ func (server *Server) getMenuCategory(ctx *gin.Context) {
 	response.OkWithData(category, ctx)
 }
 
-func (server *Server) createMenuCategory(ctx *gin.Context) {
+func (server *Server) CreateMenuCategory(ctx *gin.Context) {
 	var req model.Category
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -86,7 +86,7 @@ func (server *Server) createMenuCategory(ctx *gin.Context) {
 	response.OkWithData(category, ctx)
 }
 
-func (server *Server) updateMenuCategory(ctx *gin.Context) {
+func (server *Server) UpdateMenuCategory(ctx *gin.Context) {
 	var body model.Category
 	var req request.GetById
 
@@ -119,7 +119,7 @@ func (server *Server) updateMenuCategory(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteMenuCategory(ctx *gin.Context) {
+func (server *Server) DeleteMenuCategory(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

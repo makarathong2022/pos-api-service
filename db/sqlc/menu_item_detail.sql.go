@@ -51,7 +51,6 @@ func (q *Queries) CreateMenuItemDetail(ctx context.Context, arg CreateMenuItemDe
 		arg.Cost,
 		arg.Price,
 		arg.VatID,
-		
 		arg.Vat,
 		arg.TerminalID,
 		arg.OutletID,

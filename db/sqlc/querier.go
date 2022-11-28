@@ -16,6 +16,7 @@ type Querier interface {
 	CreateMenuSize(ctx context.Context, arg CreateMenuSizeParams) (TblMenuSize, error)
 	CreateOutlet(ctx context.Context, arg CreateOutletParams) (TblOutlet, error)
 	CreatePrinter(ctx context.Context, arg CreatePrinterParams) (TblPrinter, error)
+	CreateTax(ctx context.Context, arg CreateTaxParams) (TblVat, error)
 	CreateTerminal(ctx context.Context, arg CreateTerminalParams) (TblTerminal, error)
 	DeleteMenuCategory(ctx context.Context, id int64) error
 	DeleteMenuGroup(ctx context.Context, arg DeleteMenuGroupParams) error
@@ -24,6 +25,7 @@ type Querier interface {
 	DeleteMenuSize(ctx context.Context, arg DeleteMenuSizeParams) error
 	DeleteOutlet(ctx context.Context, arg DeleteOutletParams) error
 	DeletePrinter(ctx context.Context, arg DeletePrinterParams) error
+	DeleteTax(ctx context.Context, id int64) error
 	DeleteTerminal(ctx context.Context, arg DeleteTerminalParams) error
 	DeteleMenuItemDetail(ctx context.Context, id int64) error
 	GetMenuCategories(ctx context.Context, arg GetMenuCategoriesParams) ([]TblMenuCategory, error)
@@ -44,6 +46,8 @@ type Querier interface {
 	GetOutlets(ctx context.Context, arg GetOutletsParams) ([]TblOutlet, error)
 	GetPrinter(ctx context.Context, id int64) (TblPrinter, error)
 	GetPrinters(ctx context.Context, arg GetPrintersParams) ([]TblPrinter, error)
+	GetTax(ctx context.Context, id int64) (TblVat, error)
+	GetTaxs(ctx context.Context, arg GetTaxsParams) ([]TblVat, error)
 	GetTerminal(ctx context.Context, id int64) (TblTerminal, error)
 	GetTerminals(ctx context.Context, arg GetTerminalsParams) ([]TblTerminal, error)
 	UpdateMenuCategory(ctx context.Context, arg UpdateMenuCategoryParams) error
@@ -55,6 +59,7 @@ type Querier interface {
 	UpdateMenuSize(ctx context.Context, arg UpdateMenuSizeParams) error
 	UpdateOutlet(ctx context.Context, arg UpdateOutletParams) error
 	UpdatePrinter(ctx context.Context, arg UpdatePrinterParams) error
+	UpdateTax(ctx context.Context, arg UpdateTaxParams) error
 	UpdateTerminal(ctx context.Context, arg UpdateTerminalParams) error
 }
 

@@ -14,7 +14,7 @@ import (
 	"github.com/lib/pq"
 )
 
-func (server *Server) createMenuItem(ctx *gin.Context) {
+func (server *Server) CreateMenuItem(ctx *gin.Context) {
 	var req model.MenuItem
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -49,7 +49,7 @@ func (server *Server) createMenuItem(ctx *gin.Context) {
 	response.OkWithDetailed(menuItem, utils.CREATE_SUCCESS, ctx)
 }
 
-func (server *Server) getMenuItems(ctx *gin.Context) {
+func (server *Server) GetMenuItems(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -81,7 +81,7 @@ func (server *Server) getMenuItems(ctx *gin.Context) {
 
 }
 
-func (server *Server) getMenuItem(ctx *gin.Context) {
+func (server *Server) GetMenuItem(ctx *gin.Context) {
 	var res request.GetById
 	if err := ctx.ShouldBindUri(&res); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -99,7 +99,7 @@ func (server *Server) getMenuItem(ctx *gin.Context) {
 
 }
 
-func (server *Server) updateMenuItem(ctx *gin.Context) {
+func (server *Server) UpdateMenuItem(ctx *gin.Context) {
 
 	var req request.GetById
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -122,7 +122,7 @@ func (server *Server) updateMenuItem(ctx *gin.Context) {
 		OutletID:    body.OutletID,
 		UpdatedAt:   time.Now(),
 	}
-
+ 
 	err := server.store.UpdateMenuItem(ctx, arg)
 	if err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -132,7 +132,7 @@ func (server *Server) updateMenuItem(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteMenuItem(ctx *gin.Context) {
+func (server *Server) DeleteMenuItem(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {

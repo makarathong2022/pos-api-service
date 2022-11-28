@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-func (server *Server) getTerminals(ctx *gin.Context) {
+func (server *Server) GetTerminals(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -44,7 +44,7 @@ func (server *Server) getTerminals(ctx *gin.Context) {
 
 }
 
-func (server *Server) getTerminal(ctx *gin.Context) {
+func (server *Server) GetTerminal(ctx *gin.Context) {
 	var req request.GetById
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -61,7 +61,7 @@ func (server *Server) getTerminal(ctx *gin.Context) {
 	response.OkWithDetailed(terminal, utils.GET_SUCCESS, ctx)
 }
 
-func (server *Server) createNewTerminal(ctx *gin.Context) {
+func (server *Server) CreateNewTerminal(ctx *gin.Context) {
 	var body model.Terminal
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
@@ -88,7 +88,7 @@ func (server *Server) createNewTerminal(ctx *gin.Context) {
 
 }
 
-func (server *Server) updateTerminal(ctx *gin.Context) {
+func (server *Server) UpdateTerminal(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -124,7 +124,7 @@ func (server *Server) updateTerminal(ctx *gin.Context) {
 
 }
 
-func (server *Server) deleteTerminal(ctx *gin.Context) {
+func (server *Server) DeleteTerminal(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

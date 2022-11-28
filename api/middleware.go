@@ -18,7 +18,7 @@ const (
 
 /*
   - gin.HandlerFunc type is a function that takes a context as input
-    so, I' am gonna to return an anonymous function with the same required signature here.
+    so, I' am gonna to return an - function with the same required signature here.
     This anonymous function is in fact the authentication middleware function we want to implement
   - The purpose of this Bearer prefix is to let the server know the type of authorization, because in the reality,
     the server might support multiple of authorization schemes. Such as Oauth, Digest, AWS signature, or many more.

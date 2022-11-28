@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getMenuSizes(ctx *gin.Context) {
+func (server *Server) GetMenuSizes(ctx *gin.Context) {
 
 	var req request.PageInfo
 
@@ -46,7 +46,7 @@ func (server *Server) getMenuSizes(ctx *gin.Context) {
 
 }
 
-func (server *Server) getMenuSize(ctx *gin.Context) {
+func (server *Server) GetMenuSize(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -64,7 +64,7 @@ func (server *Server) getMenuSize(ctx *gin.Context) {
 	response.OkWithData(size, ctx)
 }
 
-func (server *Server) createMenuSize(ctx *gin.Context) {
+func (server *Server) CreateMenuSize(ctx *gin.Context) {
 	var req model.MenuSize
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -89,7 +89,7 @@ func (server *Server) createMenuSize(ctx *gin.Context) {
 	response.OkWithData(size, ctx)
 }
 
-func (server *Server) updateMenuSize(ctx *gin.Context) {
+func (server *Server) UpdateMenuSize(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -121,7 +121,7 @@ func (server *Server) updateMenuSize(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteMenuSize(ctx *gin.Context) {
+func (server *Server) DeleteMenuSize(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getMenuGroups(ctx *gin.Context) {
+func (server *Server) GetMenuGroups(ctx *gin.Context) {
 	var req request.PageInfo
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -41,7 +41,7 @@ func (server *Server) getMenuGroups(ctx *gin.Context) {
 	}, utils.GET_SUCCESS, ctx)
 }
 
-func (server *Server) getMenuGroup(ctx *gin.Context) {
+func (server *Server) GetMenuGroup(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -59,7 +59,7 @@ func (server *Server) getMenuGroup(ctx *gin.Context) {
 	response.OkWithDetailed(group, utils.CREATE_SUCCESS, ctx)
 }
 
-func (server *Server) createMenuGroup(ctx *gin.Context) {
+func (server *Server) CreateMenuGroup(ctx *gin.Context) {
 	var req model.MenuGroup
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -84,7 +84,7 @@ func (server *Server) createMenuGroup(ctx *gin.Context) {
 	response.OkWithDetailed(group, utils.CREATE_SUCCESS, ctx)
 }
 
-func (server *Server) updateMenuGroup(ctx *gin.Context) {
+func (server *Server) UpdateMenuGroup(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -116,7 +116,7 @@ func (server *Server) updateMenuGroup(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteMenuGroup(ctx *gin.Context) {
+func (server *Server) DeleteMenuGroup(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getMenuItemModifies(ctx *gin.Context) {
+func (server *Server) GetMenuItemModifies(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -41,7 +41,7 @@ func (server *Server) getMenuItemModifies(ctx *gin.Context) {
 
 }
 
-func (server *Server) getMenuItemModify(ctx *gin.Context) {
+func (server *Server) GetMenuItemModify(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -59,7 +59,7 @@ func (server *Server) getMenuItemModify(ctx *gin.Context) {
 	response.OkWithData(menuItemModify, ctx)
 }
 
-func (server *Server) createMenuItemModify(ctx *gin.Context) {
+func (server *Server) CreateMenuItemModify(ctx *gin.Context) {
 	var body model.MenuItemModify
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
@@ -83,7 +83,7 @@ func (server *Server) createMenuItemModify(ctx *gin.Context) {
 
 }
 
-func (server *Server) updateMenuItemModify(ctx *gin.Context) {
+func (server *Server) UpdateMenuItemModify(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

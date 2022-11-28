@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getOutlets(ctx *gin.Context) {
+func (server *Server) GetOutlets(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -43,7 +43,7 @@ func (server *Server) getOutlets(ctx *gin.Context) {
 
 }
 
-func (server *Server) getOutlet(ctx *gin.Context) {
+func (server *Server) GetOutlet(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -61,7 +61,7 @@ func (server *Server) getOutlet(ctx *gin.Context) {
 	response.OkWithDetailed(outlet, utils.GET_SUCCESS, ctx)
 }
 
-func (server *Server) createNewOutlet(ctx *gin.Context) {
+func (server *Server) CreateNewOutlet(ctx *gin.Context) {
 	var req model.Outlet
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -87,7 +87,7 @@ func (server *Server) createNewOutlet(ctx *gin.Context) {
 	response.OkWithDetailed(outlet, utils.CREATE_SUCCESS, ctx)
 }
 
-func (server *Server) updateOutlet(ctx *gin.Context) {
+func (server *Server) UpdateOutlet(ctx *gin.Context) {
 	var req request.GetById
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		response.FailWithMessage(errRes(err), ctx)
@@ -120,7 +120,7 @@ func (server *Server) updateOutlet(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteOutlet(ctx *gin.Context) {
+func (server *Server) DeleteOutlet(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {

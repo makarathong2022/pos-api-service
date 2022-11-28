@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) getMenuItemDetials(ctx *gin.Context) {
+func (server *Server) GetMenuItemDetials(ctx *gin.Context) {
 	var req request.PageInfo
 
 	if err := ctx.ShouldBindQuery(&req); err != nil {
@@ -41,7 +41,7 @@ func (server *Server) getMenuItemDetials(ctx *gin.Context) {
 
 }
 
-func (server *Server) getMenuItemDetial(ctx *gin.Context) {
+func (server *Server) GetMenuItemDetial(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -60,7 +60,7 @@ func (server *Server) getMenuItemDetial(ctx *gin.Context) {
 
 }
 
-func (server *Server) createMenuItemDetail(ctx *gin.Context) {
+func (server *Server) CreateMenuItemDetail(ctx *gin.Context) {
 	var body model.MenuItemDetail
 
 	if err := ctx.ShouldBindJSON(&body); err != nil {
@@ -92,7 +92,7 @@ func (server *Server) createMenuItemDetail(ctx *gin.Context) {
 	response.OkWithData(menuItemDetail, ctx)
 }
 
-func (server *Server) updateMenuItemDetial(ctx *gin.Context) {
+func (server *Server) UpdateMenuItemDetial(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -130,7 +130,7 @@ func (server *Server) updateMenuItemDetial(ctx *gin.Context) {
 	response.OkWithMessage(utils.UPDATE_SUCCESS, ctx)
 }
 
-func (server *Server) deleteMenuItemDetial(ctx *gin.Context) {
+func (server *Server) DeleteMenuItemDetial(ctx *gin.Context) {
 	var req request.GetById
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
